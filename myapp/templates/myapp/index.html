@@ -305,7 +305,7 @@ async function convertTTS() {
             formData.append('speed', speed);
 
             try {
-                const response = await fetch('/tts/', {
+                const response = await fetch('/text-to-speech/', {
                     method: 'POST',
                     body: formData
                 });
@@ -333,7 +333,7 @@ async function convertTTS() {
             formData.append('audio', fileInput.files[0]);
 
             try {
-                const response = await fetch('/stt/', {
+                const response = await fetch('/speech-to-text/', {
                     method: 'POST',
                     body: formData
                 });
@@ -356,7 +356,7 @@ async function convertTTS() {
             formData.append('target_lang', target_lang);
 
             try {
-                const response = await fetch('/translate/', {
+                const response = await fetch('/translate-text/', {
                     method: 'POST',
                     body: formData
                 });
