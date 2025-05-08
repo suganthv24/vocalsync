@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VocalSync</title>
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --secondary: #6366f1;
+      --background: #1f2937; /* Darker background */
+      --text: #f9fafb; /* Light text */
+      --card: #2d3748; /* Darker card background */
+      --border: #4b5563;
+      --shadow: 0 4px 16px rgba(0,0,0,0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', Arial, sans-serif;
+      margin: 0;
+      padding: 2rem;
+      background: var(--background);
+      color: var(--text);
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: var(--card);
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      animation: fadeIn 0.6s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 2rem;
+      color: var(--primary);
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+    }
+
+    .section {
+      margin-bottom: 2rem;
+      padding: 2rem;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #374151; /* Darker section background */
+      transition: transform 0.3s ease-in-out, box-shadow 0.3s ease;
+    }
+
+    .section:hover {
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      transform: translateY(-4px);
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+      color: var(--secondary);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    input[type="file"], 
+    input[type="number"],
+    textarea, 
+    select, 
+    button {
+      width: 100%;
+      padding: 0.9rem;
+      margin: 0.6rem 0 1.2rem;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 1rem;
+      background: #1f2937;
+      color: #f9fafb;
+      transition: all 0.3s ease;
+    }
+
+    input[type="file"]:hover, 
+    input[type="number"]:hover, 
+    select:hover, 
+    button:hover {
+      border-color: var(--primary);
+      background-color: #374151;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+      transition: all 0.3s ease;
+    }
+
+    textarea:focus {
+      background: #374151;
+      box-shadow: 0 0 8px rgba(79,70,229,0.5);
+    }
+
+    button {
+      background: var(--primary);
+      color: white;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      transition: background 0.3s, transform 0.2s;
+      box-shadow: 0 2px 6px rgba(79,70,229,0.3);
+    }
+
+    button:hover {
+      background: var(--secondary);
+      transform: translateY(-2px);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    audio {
+      width: 100%;
+      margin-top: 1rem;
+      border-radius: 8px;
+      background: #2d3748;
+      padding: 5px;
+    }
+
+    a#tts-download {
+      display: inline-block;
+      margin-top: 1rem;
+      background: var(--secondary);
+      color: white;
+      padding: 0.7rem 1.2rem;
+      border-radius: 8px;
+      text-align: center;
+      text-decoration: none;
+      transition: background 0.3s;
+    }
+
+    a#tts-download:hover {
+      background: var(--primary);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>VocalSync</h1>
+
+    <!-- Text to Speech -->
+    <div class="section">
+      <h2>Text to Speech</h2>
+      <textarea id="tts-text" placeholder="Enter text..."></textarea>
+      <select id="tts-lang"> 
+        <option value="af">Afrikaans</option>
+        <option value="ar">Arabic</option>
+        <option value="bn">Bengali</option>
+        <option value="bg">Bulgarian</option>
+        <option value="ca">Catalan</option>
+        <option value="zh-CN">Chinese (Simplified)</option>
+        <option value="zh-TW">Chinese (Traditional)</option>
+        <option value="hr">Croatian</option>
+        <option value="cs">Czech</option>
+        <option value="da">Danish</option>
+        <option value="nl">Dutch</option>
+        <option value="en" selected>English</option>
+        <option value="fi">Finnish</option>
+        <option value="fr">French</option>
+        <option value="de">German</option>
+        <option value="el">Greek</option>
+        <option value="gu">Gujarati</option>
+        <option value="hi">Hindi</option>
+        <option value="hu">Hungarian</option>
+        <option value="is">Icelandic</option>
+        <option value="id">Indonesian</option>
+        <option value="it">Italian</option>
+        <option value="ja">Japanese</option>
+        <option value="jv">Javanese</option>
+        <option value="kn">Kannada</option>
+        <option value="ko">Korean</option>
+        <option value="la">Latin</option>
+        <option value="lv">Latvian</option>
+        <option value="lt">Lithuanian</option>
+        <option value="mk">Macedonian</option>
+        <option value="ml">Malayalam</option>
+        <option value="mr">Marathi</option>
+        <option value="ne">Nepali</option>
+        <option value="no">Norwegian</option>
+        <option value="pl">Polish</option>
+        <option value="pt">Portuguese</option>
+        <option value="ro">Romanian</option>
+        <option value="ru">Russian</option>
+        <option value="sr">Serbian</option>
+        <option value="si">Sinhala</option>
+        <option value="sk">Slovak</option>
+        <option value="es">Spanish</option>
+        <option value="su">Sundanese</option>
+        <option value="sw">Swahili</option>
+        <option value="sv">Swedish</option>
+        <option value="ta">Tamil</option>
+        <option value="te">Telugu</option>
+        <option value="th">Thai</option>
+        <option value="tr">Turkish</option>
+        <option value="uk">Ukrainian</option>
+        <option value="ur">Urdu</option>
+        <option value="vi">Vietnamese</option>
+        <option value="cy">Welsh</option>
+      </select>
+      <input type="number" id="tts-speed" step="0.1" min="0.5" max="2" value="1">
+      <button onclick="convertTTS()">Generate Speech</button>
+      <audio id="tts-audio" controls hidden></audio>
+      <a id="tts-download" hidden>Download</a>
+    </div>
+
+    <!-- Speech to Text -->
+    <div class="section">
+      <h2>Speech to Text</h2>
+      <input type="file" id="stt-file" accept="audio/*">
+      <button onclick="convertSTT()">Convert to Text</button>
+      <textarea id="stt-result" readonly placeholder="Result will appear here..."></textarea>
+    </div>
+
+    <!-- Translation -->
+    <div class="section">
+      <h2>Translation</h2>
+      <textarea id="translate-input" placeholder="Enter text..."></textarea>
+      <select id="target-lang">
+        <option value="af">Afrikaans</option>
+        <option value="ar">Arabic</option>
+        <option value="bn">Bengali</option>
+        <option value="bg">Bulgarian</option>
+        <option value="ca">Catalan</option>
+        <option value="zh-CN">Chinese (Simplified)</option>
+        <option value="zh-TW">Chinese (Traditional)</option>
+        <option value="hr">Croatian</option>
+        <option value="cs">Czech</option>
+        <option value="da">Danish</option>
+        <option value="nl">Dutch</option>
+        <option value="en" selected>English</option>
+        <option value="fi">Finnish</option>
+        <option value="fr">French</option>
+        <option value="de">German</option>
+        <option value="el">Greek</option>
+        <option value="gu">Gujarati</option>
+        <option value="hi">Hindi</option>
+        <option value="hu">Hungarian</option>
+        <option value="is">Icelandic</option>
+        <option value="id">Indonesian</option>
+        <option value="it">Italian</option>
+        <option value="ja">Japanese</option>
+        <option value="jv">Javanese</option>
+        <option value="kn">Kannada</option>
+        <option value="ko">Korean</option>
+        <option value="la">Latin</option>
+        <option value="lv">Latvian</option>
+        <option value="lt">Lithuanian</option>
+        <option value="mk">Macedonian</option>
+        <option value="ml">Malayalam</option>
+        <option value="mr">Marathi</option>
+        <option value="ne">Nepali</option>
+        <option value="no">Norwegian</option>
+        <option value="pl">Polish</option>
+        <option value="pt">Portuguese</option>
+        <option value="ro">Romanian</option>
+        <option value="ru">Russian</option>
+        <option value="sr">Serbian</option>
+        <option value="si">Sinhala</option>
+        <option value="sk">Slovak</option>
+        <option value="es">Spanish</option>
+        <option value="su">Sundanese</option>
+        <option value="sw">Swahili</option>
+        <option value="sv">Swedish</option>
+        <option value="ta">Tamil</option>
+        <option value="te">Telugu</option>
+        <option value="th">Thai</option>
+        <option value="tr">Turkish</option>
+        <option value="uk">Ukrainian</option>
+        <option value="ur">Urdu</option>
+        <option value="vi">Vietnamese</option>
+        <option value="cy">Welsh</option>
+      </select>
+      <button onclick="translateText()">Translate</button>
+      <textarea id="translate-output" readonly placeholder="Translated text will appear here..."></textarea>
+    </div>
+  </div>
+
+<script>
+
+async function convertTTS() {
+            const text = document.getElementById('tts-text').value;
+            const lang = document.getElementById('tts-lang').value;
+            const speed = document.getElementById('tts-speed').value;
+
+            const formData = new FormData();
+            formData.append('text', text);
+            formData.append('lang', lang);
+            formData.append('speed', speed);
+
+            try {
+                const response = await fetch('/tts/', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                if(data.error) throw new Error(data.error);
+
+                const audioPlayer = document.getElementById('tts-audio');
+                audioPlayer.src = data.audio_url;
+                audioPlayer.hidden = false;
+                
+                const downloadLink = document.getElementById('tts-download');
+                downloadLink.href = data.download_url;
+                downloadLink.hidden = false;
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+
+        async function convertSTT() {
+            const fileInput = document.getElementById('stt-file');
+            if (!fileInput.files.length) return alert('Please select an audio file');
+
+            const formData = new FormData();
+            formData.append('audio', fileInput.files[0]);
+
+            try {
+                const response = await fetch('/stt/', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                if(data.error) throw new Error(data.error);
+                
+                document.getElementById('stt-result').value = data.text;
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+
+        async function translateText() {
+            const text = document.getElementById('translate-input').value;
+            const target_lang = document.getElementById('target-lang').value;
+
+            const formData = new FormData();
+            formData.append('text', text);
+            formData.append('target_lang', target_lang);
+
+            try {
+                const response = await fetch('/translate/', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                if(data.error) throw new Error(data.error);
+                
+                document.getElementById('translate-output').value = data.translated_text;
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+
+</script>
+
+</body>
+</html>
