@@ -4,39 +4,61 @@
   <meta charset="UTF-8">
   <title>VocalSync - View Data</title>
   <style>
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    :root {
+      --primary: #4f46e5;
+      --secondary: #6366f1;
+      --background: #1f2937; /* Darker background */
+      --text: #f9fafb; /* Light text */
+      --card: #2d3748; /* Darker card background */
+      --border: #4b5563;
+      --shadow: 0 4px 16px rgba(0,0,0,0.12);
+    }
+    * {
+      box-sizing: border-box;
+    }
     body {
-      font-family: "Segoe UI", sans-serif;
+      font-family: 'Poppins', Arial, sans-serif;
       margin: 0;
       padding: 0;
-      background-color: #f0f8ff;
-      color: #333;
+      background-color: var(--background);
+      color: var(--text);
     }
 
-    header {
-      background-color: #007bff;
-      padding: 20px;
+    h1 {
       text-align: center;
-      color: white;
-      font-size: 1.8rem;
-      font-weight: bold;
+      font-size: 2.5rem;
+      margin-bottom: 2rem;
+      color: var(--primary);
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
     }
 
     .container {
       max-width: 1100px;
       margin: 40px auto;
+        background: var(--card);
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        color: var(--text);
       padding: 20px;
+      animation: fadeIn 0.6s ease-in-out;
     }
 
     .card {
-      background: #ffffff;
-      border-radius: 16px;
+        background: #374151; /* Darker section background */
+      transition: transform 0.3s ease-in-out, box-shadow 0.3s ease;
+      border-radius: 12px;
       box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
       padding: 30px;
       margin-bottom: 40px;
     }
 
     h2, h4 {
-      color: #007bff;
+      color: var(--secondary);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
       margin-bottom: 20px;
     }
 
@@ -45,6 +67,9 @@
       gap: 10px;
       margin-bottom: 20px;
       justify-content: center;
+        align-items: center;
+        animation: fadeIn 0.6s ease-in-out;
+        
     }
 
     .search-form input {
@@ -53,11 +78,13 @@
       border: 1px solid #ccc;
       border-radius: 8px;
       font-size: 1rem;
+        color: #f9fafb; /* Light text */
+        background-color: #1f2937; /* Darker input background */
     }
 
     .search-form button {
       padding: 12px 20px;
-      background-color: #007bff;
+      background-color: #4f46e5;
       color: white;
       border: none;
       border-radius: 8px;
@@ -65,23 +92,25 @@
     }
 
     .search-form button:hover {
-      background-color: #0056b3;
+      background-color: #6366f1;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 10px;
+      
     }
 
     th, td {
       padding: 12px 14px;
       text-align: left;
       border-bottom: 1px solid #ddd;
+        color: var(--text);
     }
 
     th {
-      background-color: #007bff;
+      background-color: #374151;
       color: white;
     }
 
@@ -107,12 +136,13 @@
 
     .btn-outline-secondary:hover {
       background-color: #007bff;
-      color: white;
+      color: rgb(107, 25, 25);
     }
 
     .page-info {
       margin-top: 10px;
       font-weight: bold;
+        color: var(--text);
     }
 
     .no-data {
@@ -123,7 +153,7 @@
   </style>
 </head>
 <body>
-  <header>📊 VocalSync - View Stored Data</header>
+  <h1>VocalSync - View Stored Data</h1>
 
   <div class="container">
     <!-- Search -->
@@ -135,7 +165,7 @@
 
     <!-- Audio Data -->
     <div class="card">
-      <h4>🔈 Audio Data</h4>
+      <h2>Text-to-Speech Data</h2>
       <table>
         <thead>
           <tr>
@@ -171,7 +201,7 @@
 
     <!-- Text Data -->
     <div class="card">
-      <h4>📝 Text Data</h4>
+      <h2>Speech-to-Text Data</h2>
       <table>
         <thead>
           <tr>
@@ -205,7 +235,7 @@
 
     <!-- Translation Data -->
     <div class="card">
-      <h4>🌐 Translation Data</h4>
+      <h2>Translation Data</h2>
       <table>
         <thead>
           <tr>

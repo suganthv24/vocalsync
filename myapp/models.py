@@ -1,4 +1,3 @@
-from django.db import models
 from mongodb import db
 
 audio_data=db['audio-data']

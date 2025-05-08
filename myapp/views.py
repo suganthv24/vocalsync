@@ -9,9 +9,9 @@ from django.shortcuts import render
 from django.http import JsonResponse, FileResponse
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
-
+from django.utils.encoding import smart_str
+import urllib.parse
 from django.core.paginator import Paginator
-from django.db.models import Q
 from django.conf import settings
 from .models import audio_data, text_data, translate_data
 
@@ -51,11 +51,19 @@ def text_to_speech(request):
             audio = audio.speedup(playback_speed=speed)
             audio.export(filepath, format="mp3")
 
+
         language_dict = { "af": "Afrikaans", "ar": "Arabic", "bn": "Bengali", "bg": "Bulgarian", "ca": "Catalan", "zh-CN": "Chinese (Simplified)", "zh-TW": "Chinese (Traditional)", "hr": "Croatian", "cs": "Czech", "da": "Danish", "nl": "Dutch", "en": "English", "fi": "Finnish", "fr": "French", "de": "German", "el": "Greek", "gu": "Gujarati", "hi": "Hindi", "hu": "Hungarian", "is": "Icelandic", "id": "Indonesian", "it": "Italian", "ja": "Japanese", "jv": "Javanese", "kn": "Kannada", "ko": "Korean", "la": "Latin", "lv": "Latvian", "lt": "Lithuanian", "mk": "Macedonian", "ml": "Malayalam", "mr": "Marathi", "ne": "Nepali", "no": "Norwegian", "pl": "Polish", "pt": "Portuguese", "ro": "Romanian", "ru": "Russian", "sr": "Serbian", "si": "Sinhala", "sk": "Slovak", "es": "Spanish", "su": "Sundanese", "sw": "Swahili", "sv": "Swedish", "ta": "Tamil", "te": "Telugu", "th": "Thai", "tr": "Turkish", "uk": "Ukrainian", "ur": "Urdu", "vi": "Vietnamese", "cy": "Welsh" }
         lang = language_dict.get(lang)
+
+        # Create a new filename based on the text and language
+        new_text = text.strip()[:15].replace(" ", "_") 
+        new_filename = f"{new_text}_{lang}.mp3"
+        new_filename = urllib.parse.quote(new_filename)
+
+        # Save the audio metadata to the database
         audio_data.insert_one({
             "text": text,
-            "filename": filename,
+            "filename": new_filename,
             "filepath": filepath,
             "lang_code": lang,
             "speed": speed,
@@ -203,11 +211,37 @@ def translate_audio(request):
         return JsonResponse({'error': str(e)}, status=500)
 
 
+# def download_audio(request, filename):
+#     filepath = os.path.join(settings.MEDIA_ROOT, filename)
+#     if os.path.exists(filepath):
+#         return FileResponse(open(filepath, 'rb'), as_attachment=True)
+#     return JsonResponse({'error': 'File not found'}, status=404)
+
+
 def download_audio(request, filename):
     filepath = os.path.join(settings.MEDIA_ROOT, filename)
-    if os.path.exists(filepath):
-        return FileResponse(open(filepath, 'rb'), as_attachment=True)
-    return JsonResponse({'error': 'File not found'}, status=404)
+    if not os.path.exists(filepath):
+        return JsonResponse({'error': 'File not found'}, status=404)
+
+    # Try to find the audio metadata from MongoDB
+    record = audio_data.find_one({"filename": filename})
+
+    # Use default name if record not found
+    if not record:
+        new_filename = f"VocalSync_Audio_{filename}"
+    else:
+        # Extract text and language to create a meaningful filename
+        text = record.get('text', 'audio').strip()[:15].replace(" ", "_")  # Shorten text
+        lang = record.get('lang_code', 'unknown')
+        new_filename = f"{text}_{lang}.mp3"
+
+    # Clean filename (handle spaces, special characters)
+    new_filename = urllib.parse.quote(new_filename)
+
+    response = FileResponse(open(filepath, 'rb'), as_attachment=True)
+    response['Content-Disposition'] = f'attachment; filename="{smart_str(new_filename)}"'
+    return response
+
 
 
 def view_data(request):
