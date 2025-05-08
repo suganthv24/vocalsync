@@ -7,4 +7,6 @@ urlpatterns = [
     path('speech-to-text/', views.speech_to_text, name='speech_to_text'),
     path('translate-text/', views.translate_text, name='translate_text'),
     path('download/<str:filename>/', views.download_audio, name='download_audio'),
+    path('view-data/', views.view_data, name='view_data'),
+
 ]

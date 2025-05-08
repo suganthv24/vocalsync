@@ -9,7 +9,11 @@ from django.shortcuts import render
 from django.http import JsonResponse, FileResponse
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
+
+from django.core.paginator import Paginator
+from django.db.models import Q
 from django.conf import settings
+from .models import audio_data, text_data, translate_data
 
 def index(request):
     return render(request, "myapp/index.html")
@@ -26,6 +30,7 @@ def speak_and_save(text, lang_code='en', speed=1.0):
         audio = audio.speedup(playback_speed=speed)
         audio.export(filepath, format="mp3")
     
+ 
     return filepath
 
 @csrf_exempt
@@ -45,7 +50,16 @@ def text_to_speech(request):
             audio = AudioSegment.from_mp3(filepath)
             audio = audio.speedup(playback_speed=speed)
             audio.export(filepath, format="mp3")
-            
+
+        language_dict = { "af": "Afrikaans", "ar": "Arabic", "bn": "Bengali", "bg": "Bulgarian", "ca": "Catalan", "zh-CN": "Chinese (Simplified)", "zh-TW": "Chinese (Traditional)", "hr": "Croatian", "cs": "Czech", "da": "Danish", "nl": "Dutch", "en": "English", "fi": "Finnish", "fr": "French", "de": "German", "el": "Greek", "gu": "Gujarati", "hi": "Hindi", "hu": "Hungarian", "is": "Icelandic", "id": "Indonesian", "it": "Italian", "ja": "Japanese", "jv": "Javanese", "kn": "Kannada", "ko": "Korean", "la": "Latin", "lv": "Latvian", "lt": "Lithuanian", "mk": "Macedonian", "ml": "Malayalam", "mr": "Marathi", "ne": "Nepali", "no": "Norwegian", "pl": "Polish", "pt": "Portuguese", "ro": "Romanian", "ru": "Russian", "sr": "Serbian", "si": "Sinhala", "sk": "Slovak", "es": "Spanish", "su": "Sundanese", "sw": "Swahili", "sv": "Swedish", "ta": "Tamil", "te": "Telugu", "th": "Thai", "tr": "Turkish", "uk": "Ukrainian", "ur": "Urdu", "vi": "Vietnamese", "cy": "Welsh" }
+        lang = language_dict.get(lang)
+        audio_data.insert_one({
+            "text": text,
+            "filename": filename,
+            "filepath": filepath,
+            "lang_code": lang,
+            "speed": speed,
+        })
         return JsonResponse({
             'audio_url': f'/media/{filename}',
             'download_url': f'/download/{filename}'
@@ -83,6 +97,16 @@ def speech_to_text(request):
             audio_data = recognizer.record(source)
             text = recognizer.recognize_google(audio_data)
 
+            
+
+        #save the given audio and generated text to the text data database
+        text_data.insert_one({
+            "filename": audio_file.name,
+            "text": text,
+            "lang_code": 'English',  # Assuming English for simplicity
+        })
+
+
         return JsonResponse({'text': text})
 
     except ValueError as e:
@@ -110,6 +134,17 @@ def translate_text(request):
         target_lang = request.POST.get('target_lang', 'es')
         
         translated = GoogleTranslator(source='auto', target=target_lang).translate(text)
+
+        language_dict = { "af": "Afrikaans", "ar": "Arabic", "bn": "Bengali", "bg": "Bulgarian", "ca": "Catalan", "zh-CN": "Chinese (Simplified)", "zh-TW": "Chinese (Traditional)", "hr": "Croatian", "cs": "Czech", "da": "Danish", "nl": "Dutch", "en": "English", "fi": "Finnish", "fr": "French", "de": "German", "el": "Greek", "gu": "Gujarati", "hi": "Hindi", "hu": "Hungarian", "is": "Icelandic", "id": "Indonesian", "it": "Italian", "ja": "Japanese", "jv": "Javanese", "kn": "Kannada", "ko": "Korean", "la": "Latin", "lv": "Latvian", "lt": "Lithuanian", "mk": "Macedonian", "ml": "Malayalam", "mr": "Marathi", "ne": "Nepali", "no": "Norwegian", "pl": "Polish", "pt": "Portuguese", "ro": "Romanian", "ru": "Russian", "sr": "Serbian", "si": "Sinhala", "sk": "Slovak", "es": "Spanish", "su": "Sundanese", "sw": "Swahili", "sv": "Swedish", "ta": "Tamil", "te": "Telugu", "th": "Thai", "tr": "Turkish", "uk": "Ukrainian", "ur": "Urdu", "vi": "Vietnamese", "cy": "Welsh" }
+        lang = language_dict.get(target_lang)
+
+        # Save the translation to the database
+        translate_data.insert_one({
+            "original_text": text,
+            "translated_text": translated,
+            "target_lang": lang,
+        })
+
         return JsonResponse({'translated_text': translated})
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
@@ -173,3 +208,32 @@ def download_audio(request, filename):
     if os.path.exists(filepath):
         return FileResponse(open(filepath, 'rb'), as_attachment=True)
     return JsonResponse({'error': 'File not found'}, status=404)
+
+
+def view_data(request):
+    search_query = request.GET.get('q', '').strip()
+
+    # Search filter (in memory since MongoDB is used directly)
+    def filter_records(records, fields):
+        if not search_query:
+            return records
+        return [r for r in records if any(search_query.lower() in str(r.get(f, '')).lower() for f in fields)]
+
+    audio_records = filter_records(list(audio_data.find()), ['filename', 'lang_code'])
+    text_records = filter_records(list(text_data.find()), ['filename', 'text'])
+    translate_records = filter_records(list(translate_data.find()), ['original_text', 'translated_text'])
+
+    # Paginate each dataset
+    audio_paginator = Paginator(audio_records, 5)
+    text_paginator = Paginator(text_records, 5)
+    translate_paginator = Paginator(translate_records, 5)
+
+    page_number = request.GET.get('page', 1)
+
+    context = {
+        'audio_data': audio_paginator.get_page(page_number),
+        'text_data': text_paginator.get_page(page_number),
+        'translate_data': translate_paginator.get_page(page_number),
+        'search_query': search_query
+    }
+    return render(request, 'myapp/view_data.html', context)

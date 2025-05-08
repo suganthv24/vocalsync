@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>VocalSync - View Data</title>
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f0f8ff;
+      color: #333;
+    }
+
+    header {
+      background-color: #007bff;
+      padding: 20px;
+      text-align: center;
+      color: white;
+      font-size: 1.8rem;
+      font-weight: bold;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+      padding: 30px;
+      margin-bottom: 40px;
+    }
+
+    h2, h4 {
+      color: #007bff;
+      margin-bottom: 20px;
+    }
+
+    .search-form {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      justify-content: center;
+    }
+
+    .search-form input {
+      width: 60%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+
+    .search-form button {
+      padding: 12px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .search-form button:hover {
+      background-color: #0056b3;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      padding: 12px 14px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #007bff;
+      color: white;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    .btn-outline-secondary {
+      border-radius: 8px;
+      padding: 6px 14px;
+      margin: 5px;
+      font-weight: bold;
+      color: #007bff;
+      border: 1px solid #007bff;
+      background: white;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .btn-outline-secondary:hover {
+      background-color: #007bff;
+      color: white;
+    }
+
+    .page-info {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    .no-data {
+      color: #999;
+      text-align: center;
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+  <header>📊 VocalSync - View Stored Data</header>
+
+  <div class="container">
+    <!-- Search -->
+    <form method="get" class="search-form">
+        <button type="button" onclick="window.location.href='/'">🏠 Home</button>
+      <input type="text" name="q" placeholder="Search filename/text..." value="{{ search_query }}">
+      <button type="submit">Search</button>
+    </form>
+
+    <!-- Audio Data -->
+    <div class="card">
+      <h4>🔈 Audio Data</h4>
+      <table>
+        <thead>
+          <tr>
+            <th>Given Text</th>
+            <th>Filename</th>
+            <th>Language Code</th>
+            <th>Speed</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for record in audio_data %}
+          <tr>
+            <td>{{ record.text}} </td>
+            <td>{{ record.filename }}</td>
+            <td>{{ record.lang_code }}</td>
+            <td>{{ record.speed }}</td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="3" class="no-data">No data found</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <div class="text-center page-info">
+        {% if audio_data.has_previous %}
+          <a href="?q={{ search_query }}&page={{ audio_data.previous_page_number }}" class="btn-outline-secondary">⬅️ Prev</a>
+        {% endif %}
+        Page {{ audio_data.number }} of {{ audio_data.paginator.num_pages }}
+        {% if audio_data.has_next %}
+          <a href="?q={{ search_query }}&page={{ audio_data.next_page_number }}" class="btn-outline-secondary">Next ➡️</a>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Text Data -->
+    <div class="card">
+      <h4>📝 Text Data</h4>
+      <table>
+        <thead>
+          <tr>
+            <th>Filename</th>
+            <th>Recognized Text</th>
+            <th>Language Code</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for record in text_data %}
+          <tr>
+            <td>{{ record.filename }}</td>
+            <td>{{ record.text }}</td>
+            <td>{{ record.lang_code }}</td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="3" class="no-data">No data found</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <div class="text-center page-info">
+        {% if text_data.has_previous %}
+          <a href="?q={{ search_query }}&page={{ text_data.previous_page_number }}" class="btn-outline-secondary">⬅️ Prev</a>
+        {% endif %}
+        Page {{ text_data.number }} of {{ text_data.paginator.num_pages }}
+        {% if text_data.has_next %}
+          <a href="?q={{ search_query }}&page={{ text_data.next_page_number }}" class="btn-outline-secondary">Next ➡️</a>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Translation Data -->
+    <div class="card">
+      <h4>🌐 Translation Data</h4>
+      <table>
+        <thead>
+          <tr>
+            <th>Original Text</th>
+            <th>Translated Text</th>
+            <th>Target Language</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for record in translate_data %}
+          <tr>
+            <td>{{ record.original_text }}</td>
+            <td>{{ record.translated_text }}</td>
+            <td>{{ record.target_lang }}</td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="3" class="no-data">No data found</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <div class="text-center page-info">
+        {% if translate_data.has_previous %}
+          <a href="?q={{ search_query }}&page={{ translate_data.previous_page_number }}" class="btn-outline-secondary">⬅️ Prev</a>
+        {% endif %}
+        Page {{ translate_data.number }} of {{ translate_data.paginator.num_pages }}
+        {% if translate_data.has_next %}
+          <a href="?q={{ search_query }}&page={{ translate_data.next_page_number }}" class="btn-outline-secondary">Next ➡️</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</body>
+</html>
