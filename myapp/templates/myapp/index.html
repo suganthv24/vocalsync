@@ -57,6 +57,13 @@
       border-radius: 12px;
       background: #374151; /* Darker section background */
       transition: transform 0.3s ease-in-out, box-shadow 0.3s ease;
+
+    }
+    #welcome-section {
+      /* i want all the button in one line */
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
     }
 
     .section:hover {
@@ -154,9 +161,12 @@
 
   <div class="container">
     <h1>VocalSync</h1>
-    <div class="section">
+    <div class="section" id="welcome-section">
   <a href="/view-data/">
     <button type="button">View Processed Data</button>
+  </a>
+  <a href="/logout/">
+    <button type="button">Logout</button>
   </a>
 </div>
 
@@ -375,8 +385,6 @@ async function convertTTS() {
                 alert(error.message);
             }
         }
-
 </script>
-
 </body>
 </html>

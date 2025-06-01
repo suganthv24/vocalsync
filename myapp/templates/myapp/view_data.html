@@ -27,7 +27,6 @@
       background-color: var(--background);
       color: var(--text);
     }
-
     h1 {
       text-align: center;
       font-size: 2.5rem;
@@ -35,7 +34,6 @@
       color: var(--primary);
       text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
     }
-
     .container {
       max-width: 1100px;
       margin: 40px auto;
@@ -46,7 +44,6 @@
       padding: 20px;
       animation: fadeIn 0.6s ease-in-out;
     }
-
     .card {
         background: #374151; /* Darker section background */
       transition: transform 0.3s ease-in-out, box-shadow 0.3s ease;
@@ -55,13 +52,11 @@
       padding: 30px;
       margin-bottom: 40px;
     }
-
     h2, h4 {
       color: var(--secondary);
       text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
       margin-bottom: 20px;
     }
-
     .search-form {
       display: flex;
       gap: 10px;
@@ -69,9 +64,7 @@
       justify-content: center;
         align-items: center;
         animation: fadeIn 0.6s ease-in-out;
-        
     }
-
     .search-form input {
       width: 60%;
       padding: 12px;
@@ -81,7 +74,6 @@
         color: #f9fafb; /* Light text */
         background-color: #1f2937; /* Darker input background */
     }
-
     .search-form button {
       padding: 12px 20px;
       background-color: #4f46e5;
@@ -90,38 +82,27 @@
       border-radius: 8px;
       cursor: pointer;
     }
-
     .search-form button:hover {
       background-color: #6366f1;
     }
-
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 10px;
-      
+      margin-top: 10px;      
     }
-
     th, td {
       padding: 12px 14px;
       text-align: left;
       border-bottom: 1px solid #ddd;
         color: var(--text);
     }
-
     th {
       background-color: #374151;
       color: white;
     }
-
-    tr:nth-child(even) {
-      background-color: #f9f9f9;
-    }
-
     .text-center {
       text-align: center;
     }
-
     .btn-outline-secondary {
       border-radius: 8px;
       padding: 6px 14px;
@@ -133,18 +114,15 @@
       cursor: pointer;
       text-decoration: none;
     }
-
     .btn-outline-secondary:hover {
       background-color: #007bff;
       color: rgb(107, 25, 25);
     }
-
     .page-info {
       margin-top: 10px;
       font-weight: bold;
         color: var(--text);
     }
-
     .no-data {
       color: #999;
       text-align: center;
@@ -154,15 +132,13 @@
 </head>
 <body>
   <h1>VocalSync - View Stored Data</h1>
-
   <div class="container">
     <!-- Search -->
     <form method="get" class="search-form">
-        <button type="button" onclick="window.location.href='/'">🏠 Home</button>
+        <button type="button" onclick="window.location.href='/'">Go to Home</button>
       <input type="text" name="q" placeholder="Search filename/text..." value="{{ search_query }}">
       <button type="submit">Search</button>
     </form>
-
     <!-- Audio Data -->
     <div class="card">
       <h2>Text-to-Speech Data</h2>
@@ -171,18 +147,18 @@
           <tr>
             <th>Given Text</th>
             <th>Filename</th>
-            <th>Language Code</th>
+            <th>Language</th>
             <th>Speed</th>
           </tr>
         </thead>
         <tbody>
           {% for record in audio_data %}
-          <tr>
-            <td>{{ record.text}} </td>
+            <tr>
+            <td>{{ record.text }}</td>
             <td>{{ record.filename }}</td>
             <td>{{ record.lang_code }}</td>
             <td>{{ record.speed }}</td>
-          </tr>
+            </tr>
           {% empty %}
           <tr><td colspan="3" class="no-data">No data found</td></tr>
           {% endfor %}
@@ -198,7 +174,6 @@
         {% endif %}
       </div>
     </div>
-
     <!-- Text Data -->
     <div class="card">
       <h2>Speech-to-Text Data</h2>
@@ -206,8 +181,8 @@
         <thead>
           <tr>
             <th>Filename</th>
-            <th>Recognized Text</th>
-            <th>Language Code</th>
+            <th>converted Text</th>
+            <th>Language</th>
           </tr>
         </thead>
         <tbody>
@@ -232,7 +207,6 @@
         {% endif %}
       </div>
     </div>
-
     <!-- Translation Data -->
     <div class="card">
       <h2>Translation Data</h2>
@@ -240,16 +214,16 @@
         <thead>
           <tr>
             <th>Original Text</th>
+            <th>Translated Language</th>
             <th>Translated Text</th>
-            <th>Target Language</th>
           </tr>
         </thead>
         <tbody>
           {% for record in translate_data %}
           <tr>
             <td>{{ record.original_text }}</td>
-            <td>{{ record.translated_text }}</td>
             <td>{{ record.target_lang }}</td>
+            <td>{{ record.translated_text }}</td>
           </tr>
           {% empty %}
           <tr><td colspan="3" class="no-data">No data found</td></tr>
